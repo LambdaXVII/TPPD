@@ -38,8 +38,19 @@ public static final int MAX_SIZE = 4000;
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
             
-            out.println(TIME_REQUEST);
+            
+            String mensagem = "";
+            Scanner sc = new Scanner(System.in);
+            
+            
+            while( !mensagem.equalsIgnoreCase("fim")){
+            
+            System.out.println("qual a sua mensagem? ");  
+            mensagem = sc.next();  
+            out.println(mensagem);
             out.flush();
+            
+            
             
             //A resposta deve terminar com uma mundanca de linha.
             //Os caracteres de mudanca de linha nao sao copiados para "response"
@@ -47,7 +58,7 @@ public static final int MAX_SIZE = 4000;
             
             if(response == null){
                 System.out.println("O servidor nao enviou qualquer respota antes de"
-                        + " fechar aligacao TCP!");   
+                        + " fechar a ligacao TCP!");   
             }else{
                 
                 System.out.println("Hora indicada pelo servidor: " + response);
@@ -65,7 +76,7 @@ public static final int MAX_SIZE = 4000;
                 }catch(NumberFormatException e){}
                 //******************************************************************
             }
-            
+           } // WHILE
         }catch(UnknownHostException e){
              System.out.println("Destino desconhecido:\n\t"+e);
         }catch(NumberFormatException e){
