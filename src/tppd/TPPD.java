@@ -5,7 +5,44 @@ package tppd;
 import java.net.*;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+
+   class ComunicaComJogo extends Thread{
+    
+         Socket s;
+                
+        ComunicaComJogo(){
+             Socket s = null;
+        }
+        
+        @Override
+       public void run(){
+            try{
+           ServerSocket server = new ServerSocket(10001);
+           while(true){
+                this.s = server.accept();
+               
+               System.out.println("Aceitei cliente");
+               BufferedReader reader = new BufferedReader(new InputStreamReader(s.getInputStream()));
+               System.out.println("MSG: " + reader.readLine());
+               PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+               out.println("Eu sou um jogador e mandei uma mensagem");
+               
+           }
+           
+       }catch(Exception e){
+                try {
+                    System.out.println("Erro: " + e);
+                    this.s.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(ComunicaComJogo.class.getName()).log(Level.SEVERE, null, ex);
+                }
+       }
+       
+    }
+ }
 
 public class TPPD {
 public static final int MAX_SIZE = 4000;
@@ -17,10 +54,14 @@ public static final int MAX_SIZE = 4000;
         
         InetAddress serverAddr = null;
         int serverPort = -1;
-        Socket socket = null;
-        BufferedReader in = null;
-        PrintWriter out = null;
+        Socket socket = null,socketToComunicaJogo = null ;
+        BufferedReader in = null, inToComunicaJogo = null;
+        PrintWriter out = null,outToComunicaJogo = null;
         String response;
+        
+        
+        
+       // ComunicaComJogo(Socket s){
         
         if(args.length != 2){
             System.out.println("Sintaxe: java TcpTimeClient serverAddress serverUdpPort");
@@ -38,10 +79,12 @@ public static final int MAX_SIZE = 4000;
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
             
-            
             String mensagem = "";
             Scanner sc = new Scanner(System.in);
             
+            
+            ComunicaComJogo cj = new ComunicaComJogo();
+             cj.start();
             
             while( !mensagem.equalsIgnoreCase("fim")){
             
@@ -90,6 +133,6 @@ public static final int MAX_SIZE = 4000;
                 socket.close();
             }
         }
-   }
-  
+   }      
 }
+
